@@ -26,7 +26,7 @@ const GoogleLoginButton = () => {
 		console.log("Google Sign In was unsuccessful. Try Again Later");
 	};
 	return (
-		<GoogleOAuthProvider clientId="405528004980-u4r3sevhsidghsd0l13rc6og5ru2fkf6.apps.googleusercontent.com">
+		<GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
 			<GoogleLogin
 				onSuccess={googleSuccess}
 				onError={googleFailure}

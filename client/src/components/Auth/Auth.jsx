@@ -13,18 +13,43 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Input from "./Input";
 import Icon from "./icon";
 import GoogleLoginButton from "./GoogleLoginButton";
+import { useNavigate } from "react-router-dom";
+import { signin, signup } from "../../actions/auth";
+import { useDispatch } from "react-redux";
+
+const initialState = {
+	firstName: "",
+	lastName: "",
+	email: "",
+	password: "",
+	confirmPassword: "",
+};
 
 const Auth = () => {
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const classes = useStyles();
 	const [showPassword, setShowPassword] = useState(false);
 	const [isSignup, setIsSignup] = useState(false);
+	const [formData, setFormData] = useState(initialState);
+
 	const handleShowPassword = () =>
 		setShowPassword((prevShowPassword) => !prevShowPassword);
-	const handleSubmit = () => {};
-	const handleChange = () => {};
+	const handleSubmit = (e) => {
+		e.preventDefault();
+
+		if (isSignup) {
+			dispatch(signup(formData, navigate));
+		} else {
+			dispatch(signin(formData, navigate));
+		}
+	};
+	const handleChange = (e) => {
+		setFormData({ ...formData, [e.target.name]: e.target.value });
+	};
 	const switchMode = () => {
 		setIsSignup((prevIsSignup) => !prevIsSignup);
-		handleShowPassword(false);
+		setShowPassword(false);
 	};
 	return (
 		<Container component="main" maxWidth="xs">
@@ -45,8 +70,8 @@ const Auth = () => {
 									half
 								/>
 								<Input
-									name="firstName"
-									label="First Name"
+									name="lastName"
+									label="Last Name"
 									handleChange={handleChange}
 									half
 								/>

@@ -7,7 +7,6 @@ import { createPost, updatePost } from "../../actions/posts";
 
 const Form = ({ currentId, setCurrentId }) => {
 	const [postData, setPostData] = useState({
-		creator: "",
 		title: "",
 		message: "",
 		tags: "",
@@ -18,30 +17,44 @@ const Form = ({ currentId, setCurrentId }) => {
 	const post = useSelector((state) =>
 		currentId ? state.posts.find((p) => p._id === currentId) : null
 	);
+	const user = JSON.parse(localStorage.getItem("profile"));
+
 	useEffect(() => {
 		if (post) setPostData(post);
 	}, [post]);
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
-
-		if (currentId) {
-			dispatch(updatePost(currentId, postData));
-		} else {
-			dispatch(createPost(postData));
-		}
-		clear();
-	};
 	const clear = () => {
 		setCurrentId(null);
 		setPostData({
-			creator: "",
 			title: "",
 			message: "",
 			tags: "",
 			selectedFile: "",
 		});
 	};
+
+	const handleSubmit = (e) => {
+		e.preventDefault();
+
+		if (currentId) {
+			dispatch(
+				updatePost(currentId, { ...postData, name: user?.result?.name })
+			);
+		} else {
+			dispatch(createPost({ ...postData, name: user?.result?.name }));
+		}
+		clear();
+	};
+
+	if (!user?.result?.name) {
+		return (
+			<Paper className={classes.paepr}>
+				<Typography variant="h6" align="center">
+					Please Sign In to create your own meories and like other's memories.
+				</Typography>
+			</Paper>
+		);
+	}
 
 	return (
 		<Paper className={classes.paper}>
@@ -54,17 +67,6 @@ const Form = ({ currentId, setCurrentId }) => {
 				<Typography variant="h6">
 					{currentId ? "Editing" : "Creating"} a Memory
 				</Typography>
-				<TextField
-					name="creator"
-					variant="outlined"
-					label="Creator"
-					fullWidth
-					value={postData.creator}
-					onChange={(e) =>
-						setPostData({ ...postData, creator: e.target.value })
-					}
-				/>
-
 				<TextField
 					name="title"
 					variant="outlined"
