@@ -4,10 +4,40 @@ import mongoose from "mongoose";
 import PostMessage from "../models/postMessage.js";
 
 export const getPosts = async (req, res) => {
+	const { page } = req.query;
 	try {
-		const postMessages = await PostMessage.find();
-		console.log(postMessages);
-		res.status(200).json(postMessages);
+		const LIMIT = 8;
+		const startIndex = (Number(page) - 1) * LIMIT; // get the starting index of every pages
+		const total = await PostMessage.countDocuments({});
+
+		const posts = await PostMessage.find()
+			.sort({ _id: -1 }) // NEWSET TO THE OLDEST
+			.limit(LIMIT)
+			.skip(startIndex);
+
+		res.status(200).json({
+			data: posts,
+			currentPage: Number(page),
+			numberOfPages: Math.ceil(total / LIMIT),
+		});
+	} catch (error) {
+		res.status(404).json({ message: error.message });
+	}
+};
+
+// QUERY -> /posts?page=1 -> page = 1 : 검색을 통해 리소스를 찾을 때 사용
+// PARAMS -> /posts/123 -> id = 123 : 리소스를 백엔드에서 받아올 때 사용
+export const getPostsBySearch = async (req, res) => {
+	const { searchQuery, tags } = req.query;
+	try {
+		// 'i' flag means 'ignore' ex) text Text TEXT -> 'text'로 검색
+		const title = new RegExp(searchQuery, "i");
+
+		const posts = await PostMessage.find({
+			$or: [{ title }, { tags: { $in: tags.split(",") } }],
+		});
+
+		res.json({ data: posts });
 	} catch (error) {
 		res.status(404).json({ message: error.message });
 	}
