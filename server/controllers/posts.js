@@ -25,6 +25,18 @@ export const getPosts = async (req, res) => {
 	}
 };
 
+export const getPost = async (req, res) => {
+	const { id } = req.params;
+
+	try {
+		const post = await PostMessage.findById(id);
+
+		res.status(200).json(post);
+	} catch (error) {
+		res.status(404).json({ message: error.message });
+	}
+};
+
 // QUERY -> /posts?page=1 -> page = 1 : 검색을 통해 리소스를 찾을 때 사용
 // PARAMS -> /posts/123 -> id = 123 : 리소스를 백엔드에서 받아올 때 사용
 export const getPostsBySearch = async (req, res) => {
