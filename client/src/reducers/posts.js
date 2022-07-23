@@ -8,6 +8,7 @@ import {
 	START_LOADING,
 	ENd_LAODING,
 	FETCH_POST,
+	COMMENT,
 } from "../constants/actionTypes";
 
 export default (state = { isLoading: true, posts: [] }, action) => {
@@ -40,7 +41,18 @@ export default (state = { isLoading: true, posts: [] }, action) => {
 					post._id === action.payload._id ? action.payload : post
 				),
 			};
-
+		case COMMENT:
+			return {
+				...state,
+				posts: state.posts.map((post) => {
+					if (post._id === action.payload._id) {
+						// change the post that just received a comment...
+						return action.payload;
+					}
+					// return all the other posts normally
+					return post;
+				}),
+			};
 		case CREATE:
 			return { ...state, posts: [...state.posts, action.payload] };
 		default:
