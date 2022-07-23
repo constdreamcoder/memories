@@ -57,7 +57,7 @@ const Form = ({ currentId, setCurrentId }) => {
 	}
 
 	return (
-		<Paper className={classes.paper}>
+		<Paper className={classes.paper} elevation={6}>
 			<form
 				autoComplete="off"
 				noValidate
@@ -70,7 +70,7 @@ const Form = ({ currentId, setCurrentId }) => {
 				<TextField
 					name="title"
 					variant="outlined"
-					label="title"
+					label="Title"
 					fullWidth
 					value={postData.title}
 					onChange={(e) => setPostData({ ...postData, title: e.target.value })}
@@ -78,8 +78,10 @@ const Form = ({ currentId, setCurrentId }) => {
 				<TextField
 					name="message"
 					variant="outlined"
-					label="message"
+					label="Message"
 					fullWidth
+					multiline
+					rows={4}
 					value={postData.message}
 					onChange={(e) =>
 						setPostData({ ...postData, message: e.target.value })
